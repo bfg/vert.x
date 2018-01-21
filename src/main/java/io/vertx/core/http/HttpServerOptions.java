@@ -15,7 +15,16 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.impl.Arguments;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.net.*;
+import io.vertx.core.net.JdkSSLEngineOptions;
+import io.vertx.core.net.JksOptions;
+import io.vertx.core.net.KeyCertOptions;
+import io.vertx.core.net.NetServerOptions;
+import io.vertx.core.net.OpenSSLEngineOptions;
+import io.vertx.core.net.PemKeyCertOptions;
+import io.vertx.core.net.PemTrustOptions;
+import io.vertx.core.net.PfxOptions;
+import io.vertx.core.net.SSLEngineOptions;
+import io.vertx.core.net.TrustOptions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,6 +115,15 @@ public class HttpServerOptions extends NetServerOptions {
    */
   public static final int DEFAULT_DECODER_INITIAL_BUFFER_SIZE = 128;
 
+  /**
+   * Default value whether <a href="https://en.wikipedia.org/wiki/X-Forwarded-For">X-Forwarded-For</a> and/or
+   * <a href="https://tools.ietf.org/html/rfc7239">Forwarded</a> headers are used to determine client address.
+   *
+   * @see #isForwarded()
+   * @see #setForwarded(boolean)
+   */
+  public static final boolean DEFAULT_USE_FORWARDED_HEADERS = false;
+
   private boolean compressionSupported;
   private int compressionLevel;
   private int maxWebsocketFrameSize;
@@ -121,6 +139,7 @@ public class HttpServerOptions extends NetServerOptions {
   private boolean decompressionSupported;
   private boolean acceptUnmaskedFrames;
   private int decoderInitialBufferSize;
+  private boolean forwarded;
 
   /**
    * Default constructor
@@ -153,6 +172,7 @@ public class HttpServerOptions extends NetServerOptions {
     this.decompressionSupported = other.isDecompressionSupported();
     this.acceptUnmaskedFrames = other.isAcceptUnmaskedFrames();
     this.decoderInitialBufferSize = other.getDecoderInitialBufferSize();
+    this.forwarded = other.isForwarded();
   }
 
   /**
@@ -172,6 +192,7 @@ public class HttpServerOptions extends NetServerOptions {
    *
    * @return the JSON
    */
+  @Override
   public JsonObject toJson() {
     JsonObject json = super.toJson();
     HttpServerOptionsConverter.toJson(this, json);
@@ -193,6 +214,7 @@ public class HttpServerOptions extends NetServerOptions {
     decompressionSupported = DEFAULT_DECOMPRESSION_SUPPORTED;
     acceptUnmaskedFrames = DEFAULT_ACCEPT_UNMASKED_FRAMES;
     decoderInitialBufferSize = DEFAULT_DECODER_INITIAL_BUFFER_SIZE;
+    forwarded = DEFAULT_USE_FORWARDED_HEADERS;
   }
 
   @Override
@@ -359,6 +381,7 @@ public class HttpServerOptions extends NetServerOptions {
     return this;
   }
 
+  @Override
   public HttpServerOptions setPort(int port) {
     super.setPort(port);
     return this;
@@ -664,6 +687,7 @@ public class HttpServerOptions extends NetServerOptions {
     return (HttpServerOptions) super.setLogActivity(logEnabled);
   }
 
+  @Override
   public HttpServerOptions setSni(boolean sni) {
     return (HttpServerOptions) super.setSni(sni);
   }
@@ -699,6 +723,26 @@ public class HttpServerOptions extends NetServerOptions {
   public HttpServerOptions setDecoderInitialBufferSize(int decoderInitialBufferSize) {
     Arguments.require(decoderInitialBufferSize > 0, "initialBufferSizeHttpDecoder must be > 0");
     this.decoderInitialBufferSize = decoderInitialBufferSize;
+    return this;
+  }
+
+  /**
+   * Tells whether {@link HttpServer} will use forwarded headers to determine client's IP address.
+   *
+   * @return true/false
+   */
+  public boolean isForwarded() {
+    return forwarded;
+  }
+
+  /**
+   * Sets the flag whether {@link HttpServer} will use forwarded headers to determine client's IP address.
+   *
+   * @param forwarded forwarded flag
+   * @return a reference to this, so the API can be used fluently
+   */
+  public HttpServerOptions setForwarded(boolean forwarded) {
+    this.forwarded = forwarded;
     return this;
   }
 

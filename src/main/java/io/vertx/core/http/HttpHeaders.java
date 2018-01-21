@@ -11,6 +11,8 @@
 
 package io.vertx.core.http;
 
+import io.netty.util.AsciiString;
+
 /**
  * Contains often used Header names.
  * <p>
@@ -265,6 +267,31 @@ public final class HttpHeaders {
    * Set-Cookie header name
    */
   public static final CharSequence SET_COOKIE = createOptimized(io.netty.handler.codec.http.HttpHeaders.Names.SET_COOKIE);
+
+  /**
+   * X-Forwarded-For header name
+   */
+  public static final CharSequence X_FORWARDED_FOR = new AsciiString("X-Forwarded-For");
+
+  /**
+   * X-Forwarded-Proto header name
+   */
+  public static final CharSequence X_FORWARDED_PROTO = new AsciiString("X-Forwarded-Proto");
+
+  /**
+   * X-Forwarded-Host header name
+   */
+  public static final CharSequence X_FORWARDED_HOST = new AsciiString("X-Forwarded-Host");
+
+  /**
+   * X-Forwarded-Port header name
+   */
+  public static final CharSequence X_FORWARDED_PORT = new AsciiString("X-Forwarded-Port");
+
+  /**
+   * <a href="https://tools.ietf.org/html/rfc7239">Forwarded</a> header name
+   */
+  public static final CharSequence FORWARDED = new AsciiString("Forwarded");
 
   /**
    * application/x-www-form-urlencoded header value
